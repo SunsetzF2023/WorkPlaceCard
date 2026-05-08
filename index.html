@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>无大道 — 职场卡牌对决</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 背景网格 -->
+  <div class="bg-grid"></div>
+  <div class="bg-scanline"></div>
+
+  <!-- 游戏主容器 -->
+  <div id="game-container">
+
+    <!-- 顶部：对手区域 -->
+    <div id="opponent-area" class="player-area opponent-area">
+      <div class="area-left">
+        <div id="opponent-hero-zone" class="hero-zone" onclick="attackHero()">
+          <div id="opponent-hero"></div>
+          <div class="deck-count">
+            <span id="opponent-deck-badge" class="deck-badge">📚 <span id="opp-deck-cnt">0</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="area-center">
+        <div id="opponent-hand" class="hand-zone opponent-hand"></div>
+        <div class="board-label">对方战线</div>
+        <div id="opponent-board" class="board-zone"></div>
+        <div id="opponent-mana" class="mana-zone"></div>
+        <span id="opponent-mana-label" class="mana-label">0/0</span>
+      </div>
+    </div>
+
+    <!-- 中间分割线 + 全局效果 -->
+    <div id="center-bar">
+      <div id="global-effects" class="global-effects"></div>
+      <div class="turn-divider">
+        <div class="divider-line"></div>
+        <div class="divider-center">
+          <span id="turn-indicator">⚡ 你的回合</span>
+        </div>
+        <div class="divider-line"></div>
+      </div>
+    </div>
+
+    <!-- 底部：玩家区域 -->
+    <div id="player-area" class="player-area">
+      <div class="area-left">
+        <div class="hero-zone">
+          <div id="player-hero"></div>
+          <div class="deck-count">
+            <span id="player-deck-badge" class="deck-badge">📚 <span id="player-deck-cnt">0</span></span>
+          </div>
+        </div>
+        <div class="action-panel">
+          <button id="end-turn-btn" class="end-turn-btn" onclick="endTurn()">结束回合</button>
+          <div id="player-mana" class="mana-zone"></div>
+          <span id="player-mana-label" class="mana-label">0/0</span>
+        </div>
+      </div>
+      <div class="area-center">
+        <div id="player-board" class="board-zone"></div>
+        <div class="board-label">我方战线</div>
+        <div id="player-hand" class="hand-zone player-hand"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 侧边日志 -->
+  <div id="log-panel">
+    <div class="log-title">📋 战斗日志</div>
+    <div id="game-log"></div>
+  </div>
+
+  <!-- 离职档案弹窗 -->
+  <div id="graveyard-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-title">📂 离职档案</div>
+      <div id="graveyard-cards"></div>
+      <button onclick="document.getElementById('graveyard-modal').style.display='none'">关闭</button>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+  <script type="module">
+    // 回合指示器更新
+    import { GameState } from './src/core/gameState.js';
+    const origRender = (await import('./src/ui/renderGame.js')).renderGame;
+
+    // 定期刷新回合指示器和牌库数量
+    setInterval(() => {
+      const ind = document.getElementById('turn-indicator');
+      if (ind) {
+        ind.textContent = GameState.currentTurn === 'player' ? '⚡ 你的回合' : '🤖 对手回合';
+      }
+      const pd = document.getElementById('player-deck-cnt');
+      const od = document.getElementById('opp-deck-cnt');
+      if (pd) pd.textContent = GameState.player.deck?.length || 0;
+      if (od) od.textContent = GameState.opponent.deck?.length || 0;
+    }, 300);
+  </script>
+</body>
+</html>
