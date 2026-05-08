@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Test</title>
+  <style>
+    body { background: #222; color: #fff; padding: 20px; font-family: monospace; }
+    .test-area { background: #333; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    #player-hand { 
+      background: rgba(13, 30, 46, 0.8); 
+      border: 2px solid #00d4ff; 
+      min-height: 140px; 
+      height: 140px;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .card {
+      width: 88px;
+      height: 120px;
+      background: #0d1e2e;
+      border: 1px solid #1a3045;
+      border-radius: 8px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 5px;
+      color: #fff;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Hand Test</h1>
+  <div id="output" class="test-area"></div>
+  <div id="player-hand" class="hand-zone"></div>
+  
+  <script>
+    // Test if we can add cards to hand
+    const handContainer = document.getElementById('player-hand');
+    const output = document.getElementById('output');
+    
+    // Create test cards
+    const testCards = [
+      { name: '创业实习生', cost: 1, attack: 1, health: 2, art: '🎒' },
+      { name: '白板设计师', cost: 2, attack: 1, health: 3, art: '📝' },
+      { name: '冲刺打工人', cost: 1, attack: 2, health: 1, art: '🏃' }
+    ];
+    
+    output.innerHTML = `Testing hand rendering with ${testCards.length} cards...`;
+    
+    testCards.forEach((card, index) => {
+      const cardEl = document.createElement('div');
+      cardEl.className = 'card';
+      cardEl.innerHTML = `
+        <div style="font-size: 18px;">${card.art}</div>
+        <div style="position: absolute; top: 5px; left: 5px; background: #00d4ff; color: #000; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">${card.cost}</div>
+        <div style="position: absolute; bottom: 20px; left: 5px;">⚔️${card.attack}</div>
+        <div style="position: absolute; bottom: 20px; right: 5px;">❤️${card.health}</div>
+        <div style="position: absolute; top: 25px; font-size: 10px; text-align: center;">${card.name}</div>
+      `;
+      cardEl.style.position = 'relative';
+      handContainer.appendChild(cardEl);
+    });
+    
+    output.innerHTML += `<br>✅ Successfully rendered ${testCards.length} cards in hand!`;
+  </script>
+</body>
+</html>

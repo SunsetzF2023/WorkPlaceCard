@@ -27,7 +27,15 @@ export const DamageSystem = {
       amount -= absorbed;
     }
     p.health -= amount;
-    if (p.health <= 0) p.health = 0;
+    if (p.health <= 0) {
+      p.health = 0;
+      // Check for game over
+      const opponent = side === 'player' ? 'opponent' : 'player';
+      GameState.gameOver = true;
+      GameState.winner = opponent;
+      console.log(`Game Over! ${opponent} wins!`);
+      GameState.addLog(`🎮 游戏结束！${side === 'player' ? '你' : '对手'}被击败了！`, 'info');
+    }
   },
 
   destroyCard(side, card) {
