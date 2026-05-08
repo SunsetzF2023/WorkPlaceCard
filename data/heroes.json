@@ -1,0 +1,32 @@
+[
+  {
+    "id": "hero_001",
+    "name": "打工皇帝",
+    "health": 30,
+    "armor": 0,
+    "faction": "IT",
+    "heroSkill": {
+      "name": "加班冲刺",
+      "cost": 2,
+      "description": "使一张友方卡牌本回合可再次攻击。",
+      "id": "overtime_rush"
+    },
+    "art": "👨‍💻",
+    "description": "IT部门的精神领袖，代码写得最多，工资发得最少。"
+  },
+  {
+    "id": "hero_002",
+    "name": "销售女王",
+    "health": 30,
+    "armor": 0,
+    "faction": "Sales",
+    "heroSkill": {
+      "name": "画大饼",
+      "cost": 2,
+      "description": "使一张友方卡牌获得+2/+2，但下回合结束时消失。",
+      "id": "false_promise"
+    },
+    "art": "👩‍💼",
+    "description": "能把石头卖出黄金价，能把失败说成试错。"
+  }
+]

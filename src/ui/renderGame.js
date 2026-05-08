@@ -1,0 +1,129 @@
+// renderGame.js - 主渲染入口
+
+import { GameState } from '../core/gameState.js';
+import { renderHero } from './renderHero.js';
+import { renderBoard } from './renderBoard.js';
+import { renderCard } from './renderCard.js';
+import { renderLog } from './renderLog.js';
+import { RuleEngine } from '../core/ruleEngine.js';
+
+export function renderGame() {
+  // 英雄区域
+  renderHero('player', GameState.player);
+  renderHero('opponent', GameState.opponent);
+
+  // 棋盘
+  renderBoard('player', GameState.player);
+  renderBoard('opponent', GameState.opponent);
+
+  // 手牌
+  renderHand('player', GameState.player);
+
+  // 对手手牌（背面）
+  renderOpponentHand(GameState.opponent);
+
+  // 日志
+  renderLog(GameState.log);
+
+  // 法力值显示
+  renderMana('player', GameState.player);
+  renderMana('opponent', GameState.opponent);
+
+  // 结束回合按钮状态
+  const endBtn = document.getElementById('end-turn-btn');
+  if (endBtn) {
+    endBtn.disabled = GameState.currentTurn !== 'player' || GameState.gameOver;
+    endBtn.textContent = GameState.currentTurn === 'player' ? '结束回合' : '对手回合...';
+    endBtn.classList.toggle('active-turn', GameState.currentTurn === 'player');
+  }
+
+  // 游戏结束画面
+  if (GameState.gameOver) {
+    showGameOver(GameState.winner);
+  }
+
+  // 全局效果显示
+  renderGlobalEffects();
+}
+
+function renderHand(side, player) {
+  const container = document.getElementById('player-hand');
+  if (!container) return;
+  container.innerHTML = '';
+
+  player.hand.forEach((card, index) => {
+    const el = renderCard(card, index, side);
+    const canPlay = RuleEngine.canPlayCard(side, card);
+    el.classList.toggle('playable', canPlay);
+    el.classList.toggle('selected', GameState.selectedCard === index);
+    el.addEventListener('click', () => onHandCardClick(index, canPlay));
+    container.appendChild(el);
+  });
+}
+
+function renderOpponentHand(player) {
+  const container = document.getElementById('opponent-hand');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < player.hand.length; i++) {
+    const back = document.createElement('div');
+    back.className = 'card card-back';
+    back.innerHTML = `<div class="card-back-art">📄</div>`;
+    container.appendChild(back);
+  }
+}
+
+function renderMana(side, player) {
+  const el = document.getElementById(`${side}-mana`);
+  if (!el) return;
+  el.innerHTML = '';
+  for (let i = 0; i < player.maxMana; i++) {
+    const gem = document.createElement('div');
+    gem.className = 'mana-gem' + (i < player.currentMana ? ' filled' : ' empty');
+    el.appendChild(gem);
+  }
+  const label = document.getElementById(`${side}-mana-label`);
+  if (label) label.textContent = `${player.currentMana}/${player.maxMana}`;
+}
+
+function onHandCardClick(index, canPlay) {
+  if (GameState.currentTurn !== 'player' || GameState.gameOver) return;
+  if (!canPlay) return;
+  if (GameState.attackPhase) {
+    GameState.attackPhase = false;
+    GameState.selectedBoardCard = null;
+  }
+  GameState.selectedCard = GameState.selectedCard === index ? null : index;
+  renderGame();
+}
+
+function showGameOver(winner) {
+  let overlay = document.getElementById('game-over-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'game-over-overlay';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <div class="game-over-box">
+      <div class="game-over-title">${winner === 'player' ? '🏆 胜利！' : '💀 失败'}</div>
+      <div class="game-over-sub">${winner === 'player' ? '恭喜你成功逃脱职场！' : '很遗憾，你被裁员了...'}</div>
+      <button onclick="location.reload()" class="restart-btn">重新开始</button>
+    </div>
+  `;
+  overlay.style.display = 'flex';
+}
+
+function renderGlobalEffects() {
+  const el = document.getElementById('global-effects');
+  if (!el) return;
+  el.innerHTML = '';
+  GameState.globalEffects.forEach(e => {
+    const badge = document.createElement('div');
+    badge.className = 'effect-badge';
+    if (e.type === 'dismissal_talk') {
+      badge.textContent = `📋 离职谈话 (${e.turnsLeft}回合)`;
+    }
+    el.appendChild(badge);
+  });
+}
