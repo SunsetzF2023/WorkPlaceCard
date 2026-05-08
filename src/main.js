@@ -80,7 +80,16 @@ async function initGame() {
     
     console.log('Deck built:', {
       playerDeckSize: GameState.player.deck.length,
-      opponentDeckSize: GameState.opponent.deck.length
+      opponentDeckSize: GameState.opponent.deck.length,
+      playerDeckCards: GameState.player.deck.map(c => c.nameZh),
+      opponentDeckCards: GameState.opponent.deck.map(c => c.nameZh)
+    });
+
+    console.log('GameState before startGameWithoutReset:', {
+      playerDeckLength: GameState.player.deck.length,
+      opponentDeckLength: GameState.opponent.deck.length,
+      playerHandLength: GameState.player.hand.length,
+      opponentHandLength: GameState.opponent.hand.length
     });
 
     console.log('Starting game...');
@@ -93,6 +102,14 @@ async function initGame() {
 }
 
 function startGameWithoutReset() {
+  console.log('startGameWithoutReset called');
+  console.log('Deck states before drawing:', {
+    playerDeck: GameState.player.deck.length,
+    opponentDeck: GameState.opponent.deck.length,
+    playerHand: GameState.player.hand.length,
+    opponentHand: GameState.opponent.hand.length
+  });
+  
   // 双方各抽3张起手牌
   DrawSystem.drawCards('player', 3);
   DrawSystem.drawCards('opponent', 3);
