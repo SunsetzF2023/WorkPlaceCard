@@ -2,6 +2,7 @@
 
 import { GameState } from './core/gameState.js';
 import { TurnManager } from './core/turnManager.js';
+import { DrawSystem } from './systems/drawSystem.js';
 import { shuffle } from './utils/shuffle.js';
 import { cloneCard } from './utils/cloneCard.js';
 import { renderGame } from './ui/renderGame.js';
