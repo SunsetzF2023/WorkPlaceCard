@@ -92,6 +92,8 @@ body {
   flex: 1;
   gap: 4px;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .opponent-area .area-center {
@@ -305,8 +307,14 @@ body {
   justify-content: center;
   gap: 6px;
   padding: 6px 8px;
-  min-height: 130px;
+  min-height: 140px;
+  height: 140px;
   overflow-x: auto;
+  position: relative;
+  z-index: 5;
+  background: rgba(13, 30, 46, 0.3);
+  border: 1px solid var(--border-dim);
+  border-radius: 8px;
 }
 
 .player-hand .card:hover {

@@ -48,8 +48,13 @@ export function renderGame() {
 
 function renderHand(side, player) {
   const container = document.getElementById('player-hand');
-  if (!container) return;
+  if (!container) {
+    console.error('Hand container not found!');
+    return;
+  }
   container.innerHTML = '';
+
+  console.log(`Rendering ${side} hand with ${player.hand.length} cards:`, player.hand.map(c => c.nameZh));
 
   player.hand.forEach((card, index) => {
     const el = renderCard(card, index, side);
@@ -59,6 +64,10 @@ function renderHand(side, player) {
     el.addEventListener('click', () => onHandCardClick(index, canPlay));
     container.appendChild(el);
   });
+
+  if (player.hand.length === 0) {
+    container.innerHTML = '<div style="color: var(--text-dim); font-size: 0.9rem;">No cards in hand</div>';
+  }
 }
 
 function renderOpponentHand(player) {
