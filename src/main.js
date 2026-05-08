@@ -61,8 +61,10 @@ async function initGame() {
       opponentHero: heroMap[opponentDeck.heroId]?.name
     });
 
+    // Reset game state FIRST
     GameState.reset();
 
+    // Set heroes
     GameState.player.hero = { ...heroMap[playerDeck.heroId] };
     GameState.opponent.hero = { ...heroMap[opponentDeck.heroId] };
 
@@ -72,6 +74,7 @@ async function initGame() {
     GameState.player.armor = GameState.player.hero.armor || 0;
     GameState.opponent.armor = GameState.opponent.hero.armor || 0;
 
+    // Build decks AFTER reset
     GameState.player.deck = buildDeck(playerDeck, cards);
     GameState.opponent.deck = buildDeck(opponentDeck, cards);
     
@@ -81,11 +84,22 @@ async function initGame() {
     });
 
     console.log('Starting game...');
-    TurnManager.startGame();
+    // Start game WITHOUT calling reset again
+    startGameWithoutReset();
     
   } catch (error) {
     console.error('Error initializing game:', error);
   }
+}
+
+function startGameWithoutReset() {
+  // 双方各抽3张起手牌
+  DrawSystem.drawCards('player', 3);
+  DrawSystem.drawCards('opponent', 3);
+
+  // 先手
+  GameState.currentTurn = 'player';
+  TurnManager.startTurn('player');
 }
 
 // 结束回合按钮
