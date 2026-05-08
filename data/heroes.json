@@ -1,18 +1,13 @@
 [
   {
     "id": "hero_001",
-    "name": "打工皇帝",
-    "health": 30,
+    "name": "创业大学生",
+    "health": 40,
     "armor": 0,
-    "faction": "IT",
-    "heroSkill": {
-      "name": "加班冲刺",
-      "cost": 2,
-      "description": "使一张友方卡牌本回合可再次攻击。",
-      "id": "overtime_rush"
-    },
-    "art": "👨‍💻",
-    "description": "IT部门的精神领袖，代码写得最多，工资发得最少。"
+    "faction": "Startup",
+    "heroSkill": null,
+    "art": "🎓",
+    "description": "刚毕业便踏上创业路，勇气比资源多。"
   },
   {
     "id": "hero_002",

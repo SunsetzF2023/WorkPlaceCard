@@ -8,8 +8,10 @@ export function renderHero(side, player) {
   if (!el || !player.hero) return;
 
   const hero = player.hero;
+  const hasSkill = hero.heroSkill && typeof hero.heroSkill.cost === 'number';
   const canUseSkill = side === 'player'
     && GameState.currentTurn === 'player'
+    && hasSkill
     && player.currentMana >= hero.heroSkill.cost
     && !GameState.gameOver;
 
@@ -22,7 +24,7 @@ export function renderHero(side, player) {
         ❤️ ${player.health}
       </div>
     </div>
-    ${side === 'player' ? `
+    ${side === 'player' && hasSkill ? `
       <button class="hero-skill-btn ${canUseSkill ? 'usable' : ''}"
         onclick="useHeroSkill()"
         ${canUseSkill ? '' : 'disabled'}>
