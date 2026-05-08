@@ -58,9 +58,9 @@ export const RuleEngine = {
     const opponent = GameState.getOpponent(attackerSide);
 
     if (targetIsHero) {
-      // 若敌方有背锅卡，不能直接打英雄
-      const hasTaunt = opponent.board.some(c => c.keywords?.includes('背锅') && !c.sleeping);
-      return !hasTaunt;
+      // 只有当对方场上没有随从时才能攻击英雄
+      const hasAliveMinions = opponent.board.some(c => c.health > 0 && !c.sleeping);
+      return !hasAliveMinions;
     }
 
     // 摸鱼：未攻击前不能被选中
