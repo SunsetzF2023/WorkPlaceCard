@@ -6,6 +6,7 @@ import { renderBoard } from './renderBoard.js';
 import { renderCard } from './renderCard.js';
 import { renderLog } from './renderLog.js';
 import { RuleEngine } from '../core/ruleEngine.js';
+import { ActionHandler } from '../core/actionHandler.js';
 
 export function renderGame() {
   // 英雄区域
@@ -59,6 +60,7 @@ function renderHand(side, player) {
   player.hand.forEach((card, index) => {
     const el = renderCard(card, index, side);
     const canPlay = RuleEngine.canPlayCard(side, card);
+    console.log(`Card ${card.nameZh} (index ${index}) canPlay: ${canPlay}, cost: ${RuleEngine.getActualCost(card)}, currentMana: ${GameState.player.currentMana}`);
     el.classList.toggle('playable', canPlay);
     el.classList.toggle('selected', GameState.selectedCard === index);
     el.addEventListener('click', () => onHandCardClick(index, canPlay));
@@ -102,8 +104,24 @@ function onHandCardClick(index, canPlay) {
     GameState.attackPhase = false;
     GameState.selectedBoardCard = null;
   }
-  GameState.selectedCard = GameState.selectedCard === index ? null : index;
+  
+  // If card is already selected, play it
+  if (GameState.selectedCard === index) {
+    playSelectedCard();
+  } else {
+    GameState.selectedCard = index;
+  }
   renderGame();
+}
+
+function playSelectedCard() {
+  const index = GameState.selectedCard;
+  if (index === null) return;
+  
+  const success = ActionHandler.playCard('player', index);
+  if (success) {
+    GameState.selectedCard = null;
+  }
 }
 
 function showGameOver(winner) {
