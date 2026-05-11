@@ -322,6 +322,29 @@ body {
   z-index: 10;
 }
 
+.player-hand .card[draggable="true"] {
+  cursor: grab;
+}
+
+.player-hand .card[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.player-hand .card.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.board-zone {
+  transition: all 0.2s ease;
+}
+
+.board-zone.drag-over {
+  background: rgba(0, 212, 255, 0.1);
+  border: 2px dashed var(--primary);
+  border-radius: 8px;
+}
+
 /* ===== 中间分割线 ===== */
 #center-bar {
   display: flex;

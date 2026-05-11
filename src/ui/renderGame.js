@@ -30,6 +30,16 @@ export function renderGame() {
   renderMana('player', GameState.player);
   renderMana('opponent', GameState.opponent);
 
+  // 设置拖放区域
+  setupBoardDropZones();
+
+  // 全局效果显示
+  renderGlobalEffects();
+
+  if (GameState.gameOver) {
+    showGameOver(GameState.winner);
+  }
+
   // 结束回合按钮状态
   const endBtn = document.getElementById('end-turn-btn');
   if (endBtn) {
@@ -37,14 +47,6 @@ export function renderGame() {
     endBtn.textContent = GameState.currentTurn === 'player' ? '结束回合' : '对手回合...';
     endBtn.classList.toggle('active-turn', GameState.currentTurn === 'player');
   }
-
-  // 游戏结束画面
-  if (GameState.gameOver) {
-    showGameOver(GameState.winner);
-  }
-
-  // 全局效果显示
-  renderGlobalEffects();
 }
 
 function renderHand(side, player) {
@@ -63,6 +65,14 @@ function renderHand(side, player) {
     console.log(`Card ${card.nameZh} (index ${index}) canPlay: ${canPlay}, cost: ${RuleEngine.getActualCost(card)}, currentMana: ${GameState.player.currentMana}`);
     el.classList.toggle('playable', canPlay);
     el.classList.toggle('selected', GameState.selectedCard === index);
+    
+    // Add drag and drop functionality
+    if (side === 'player' && canPlay) {
+      el.draggable = true;
+      el.addEventListener('dragstart', (e) => onDragStart(e, index));
+      el.addEventListener('dragend', (e) => onDragEnd(e));
+    }
+    
     el.addEventListener('click', () => onHandCardClick(index, canPlay));
     container.appendChild(el);
   });
@@ -122,6 +132,54 @@ function playSelectedCard() {
   if (success) {
     GameState.selectedCard = null;
   }
+}
+
+// Drag and drop handlers
+let draggedCardIndex = null;
+
+function onDragStart(e, index) {
+  draggedCardIndex = index;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', e.target.innerHTML);
+  e.target.classList.add('dragging');
+}
+
+function onDragEnd(e) {
+  e.target.classList.remove('dragging');
+  draggedCardIndex = null;
+}
+
+function setupBoardDropZones() {
+  const playerBoard = document.getElementById('player-board');
+  if (!playerBoard) return;
+  
+  // Make board a drop zone
+  playerBoard.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    playerBoard.classList.add('drag-over');
+  });
+  
+  playerBoard.addEventListener('dragleave', (e) => {
+    playerBoard.classList.remove('drag-over');
+  });
+  
+  playerBoard.addEventListener('drop', (e) => {
+    e.preventDefault();
+    playerBoard.classList.remove('drag-over');
+    
+    if (draggedCardIndex !== null) {
+      const card = GameState.player.hand[draggedCardIndex];
+      const canPlay = RuleEngine.canPlayCard('player', card);
+      
+      if (canPlay) {
+        const success = ActionHandler.playCard('player', draggedCardIndex);
+        if (success) {
+          GameState.selectedCard = null;
+        }
+      }
+    }
+  });
 }
 
 function showGameOver(winner) {
